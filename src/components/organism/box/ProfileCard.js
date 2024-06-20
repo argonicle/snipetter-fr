@@ -23,7 +23,7 @@ const ProfileCard = ({ isEdit }) => {
       }
     };
     fetch();
-  }, [authUser]);
+  }, [authUser, user]);
 
   return (
     <ProfileCardContainer>
@@ -32,7 +32,7 @@ const ProfileCard = ({ isEdit }) => {
           <SEditIcon />
         </Link>
       )}
-      <Flex alignItems="center">
+      <Flex alignItems="center" m="0 auto">
         {!user ? (
           <CircularProgress isIndeterminate color="green.300" />
         ) : isEdit ? (
@@ -61,9 +61,9 @@ const ProfileCard = ({ isEdit }) => {
               w="80px"
               src={process.env.REACT_APP_BACKEND_ORIGIN + user.profileImage}
             />
-            <Flex mt="5%" gap="10px">
+            <Flex mt="5%" gap="0 10px" flexWrap="wrap" justifyContent="center">
               <Text
-                fontSize="0.1em"
+                fontSize="0.8em"
                 m="0"
                 textDecoration="underline"
                 _hover={{ cursor: "pointer", opacity: "0.5" }}
@@ -71,7 +71,7 @@ const ProfileCard = ({ isEdit }) => {
                 {user.followings.length} Followings
               </Text>
               <Text
-                fontSize="0.1em"
+                fontSize="0.8em"
                 m="0"
                 textDecoration="underline"
                 _hover={{ cursor: "pointer", opacity: "0.5" }}

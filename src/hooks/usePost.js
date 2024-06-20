@@ -174,6 +174,14 @@ const usePost = (initPost) => {
           return new Date(post2.createdAt) - new Date(post1.createdAt);
         })
       );
+      toast({
+        title: "Success.",
+        description: "Your post are deleted",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
       setIsLoading(false);
     } catch (error) {
       console.log(error);

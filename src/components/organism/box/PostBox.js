@@ -85,29 +85,16 @@ const PostBox = ({ post, likePost, isComment, deletePost }) => {
           </Button>
         </Link>
       ) : (
-        <CardFooter
-          justify="space-between"
-          flexWrap="wrap"
-          sx={{
-            "& > button": {
-              minW: "136px",
-            },
-          }}
-        >
+        <CardFooter justify="center" flexWrap="wrap" gap="2rem">
           <Button
             variant={isLike ? undefined : "ghost"}
             colorScheme={isLike ? "pink" : "gray"}
             leftIcon={<BiLike />}
             onClick={() => likePost(post._id, authUser._id)}
-            ml="10%"
           >
             {post.likes.length} Likes
           </Button>
-          <Link
-            to={`/home/timeline/${post._id}`}
-            style={{ marginRight: "10%" }}
-            state={{ post }}
-          >
+          <Link to={`/home/timeline/${post._id}`} state={{ post }}>
             <Button variant="ghost" leftIcon={<BiChat />}>
               {post.comments?.length} Comments
             </Button>

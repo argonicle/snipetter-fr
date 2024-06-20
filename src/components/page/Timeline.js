@@ -11,7 +11,7 @@ const Timeline = () => {
 
   useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [posts]);
 
   if (!posts) {
     return (
