@@ -10,6 +10,7 @@ import {
   Text,
   Button,
   MenuItem,
+  Avatar,
 } from "@chakra-ui/react";
 import { BiLike, BiChat } from "react-icons/bi";
 import { DeleteIcon, CloseIcon } from "@chakra-ui/icons";
@@ -17,15 +18,16 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { format } from "timeago.js";
 
-import Avatar from "../../atom/Avatar";
 import useUser from "../../../hooks/useUser";
-import { CircularProgress } from "@chakra-ui/react";
 import useAuthUser from "../../../hooks/useAuthUser";
 import HamburgerMenu from "../../molecule/HamburgerMenu";
+import LoadingCircle from "../../atom/LoadingCircle";
+import usePost from "../../../hooks/usePost";
 
-const PostBox = ({ post, likePost, isComment, deletePost }) => {
+const PostCard = ({ post, isProfile, isDetail }) => {
   const { authUser } = useAuthUser();
   const { getUser, user, isLoading } = useUser();
+  const { likePost, deletePost } = usePost();
 
   const isLike = post.likes.includes(authUser._id);
 
@@ -34,12 +36,12 @@ const PostBox = ({ post, likePost, isComment, deletePost }) => {
   }, []);
 
   return (
-    <Card maxW="md" sx={{ margin: "0 auto 10px" }}>
+    <Card maxW="md" m="0 auto 10px">
       <CardHeader>
         <Flex spacing="4" flexWrap="wrap">
           <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-            {!user || isLoading ? (
-              <CircularProgress isIndeterminate color="green.300" />
+            {isLoading || !user ? (
+              <LoadingCircle />
             ) : (
               <Link to={`/home/profile/${user._id}`}>
                 <SAvatar
@@ -53,7 +55,11 @@ const PostBox = ({ post, likePost, isComment, deletePost }) => {
                 <Heading size="sm">{post.title}</Heading>
                 <Text>{format(post.createdAt)}</Text>
               </Flex>
-              {!user || isLoading ? <p>Loading...</p> : <p>{user.username}</p>}
+              {isLoading || !user ? (
+                <Text>Loading...</Text>
+              ) : (
+                <Text>{user.username}</Text>
+              )}
               <Text>language: {post.language}</Text>
             </Box>
           </Flex>
@@ -61,8 +67,7 @@ const PostBox = ({ post, likePost, isComment, deletePost }) => {
             <HamburgerMenu>
               <MenuItem
                 icon={<DeleteIcon />}
-                onClick={() => deletePost(post._id)}
-                command="⌘T"
+                onClick={() => deletePost(post._id, isProfile)}
               >
                 Delete post
               </MenuItem>
@@ -70,42 +75,50 @@ const PostBox = ({ post, likePost, isComment, deletePost }) => {
           )}
         </Flex>
       </CardHeader>
-      <Code>{post.code}</Code>
 
+      <Code>{post.code}</Code>
       <CardBody>
         <Text>{post.description}</Text>
       </CardBody>
-      {isComment ? (
-        <Link to="/home/timeline" style={{ width: "20%", margin: "0 auto 3%" }}>
+
+      <CardFooter justify="center" flexWrap="wrap" gap="2rem">
+        <Button
+          variant={isLike ? undefined : "ghost"}
+          colorScheme={isLike ? "pink" : "gray"}
+          leftIcon={<BiLike />}
+          onClick={() => likePost(post._id)}
+        >
+          {post.likes.length} Likes
+        </Button>
+        <Link
+          to={
+            isProfile
+              ? isDetail
+                ? `/home/profile/${user?._id}`
+                : `/home/profile/${user?._id}/${post._id}`
+              : isDetail
+              ? `/home/timeline`
+              : `/home/timeline/${post._id}`
+          }
+          state={isProfile}
+        >
           <Button
-            variant={isLike ? undefined : "ghost"}
-            leftIcon={<CloseIcon />}
+            variant="ghost"
+            leftIcon={isDetail ? <CloseIcon /> : <BiChat />}
           >
-            Close
+            {isDetail ? (
+              <Text>Close</Text>
+            ) : (
+              <Text> {post.comments?.length} Comments</Text>
+            )}
           </Button>
         </Link>
-      ) : (
-        <CardFooter justify="center" flexWrap="wrap" gap="2rem">
-          <Button
-            variant={isLike ? undefined : "ghost"}
-            colorScheme={isLike ? "pink" : "gray"}
-            leftIcon={<BiLike />}
-            onClick={() => likePost(post._id, authUser._id)}
-          >
-            {post.likes.length} Likes
-          </Button>
-          <Link to={`/home/timeline/${post._id}`} state={{ post }}>
-            <Button variant="ghost" leftIcon={<BiChat />}>
-              {post.comments?.length} Comments
-            </Button>
-          </Link>
-        </CardFooter>
-      )}
+      </CardFooter>
     </Card>
   );
 };
 
-export default PostBox;
+export default PostCard;
 
 const Code = styled.pre`
   background-color: #f5f5f5;

@@ -51,7 +51,7 @@ const Post = () => {
 
   return (
     <PostContainer>
-      <PostBox>
+      <PostCard>
         <PostInput
           isInvalid={error.title !== undefined}
           isDisabled={isLoading}
@@ -101,7 +101,7 @@ const Post = () => {
           placeholder="Description"
           width="80%"
         />
-      </PostBox>
+      </PostCard>
       <PostButton isLoading={isLoading} color="gray" onClick={createPost}>
         Post
       </PostButton>
@@ -112,12 +112,13 @@ const Post = () => {
 export default Post;
 
 const PostContainer = styled.div`
-  background-color: ${COLOR.LIGHT_GREY};
   text-align: center;
-  padding-top: 10%;
+  padding-top: 5%;
+  height: 100vh;
+  overflow-y: scroll;
 `;
 
-const PostBox = styled.div`
+const PostCard = styled.div`
   width: 90%;
   background-color: white;
   box-shadow: 13px 5px 27px -3px #777777;

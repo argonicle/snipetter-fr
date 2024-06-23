@@ -9,7 +9,6 @@ const TopHeader = () => {
       <HeaderLayout>
         <TopNav />
       </HeaderLayout>
-      <div id="top" style={{ backgroundColor: "white", height: "133px" }}></div>
     </>
   );
 };

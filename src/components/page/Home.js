@@ -13,12 +13,10 @@ const Home = () => {
     return <Navigate to="/" />;
   }
   return (
-    <>
+    <HomeContainer>
       <HomeHeader />
-      <HomeContainer>
-        <Outlet />
-      </HomeContainer>
-    </>
+      <Outlet />
+    </HomeContainer>
   );
 };
 

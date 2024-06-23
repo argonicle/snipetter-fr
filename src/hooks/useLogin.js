@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
 
 import authApi from "../api/authApi";
 import { saveAuthUserToStorage } from "../util/authUser";
 import useAuthUser from "./useAuthUser";
+import useMessage from "./useMessage";
 
 const useLogin = () => {
   const { setAuthUser } = useAuthUser();
@@ -14,7 +14,7 @@ const useLogin = () => {
   const [error, setError] = useState({});
 
   const navigate = useNavigate();
-  const toast = useToast();
+  const { showMessage } = useMessage();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,14 +23,7 @@ const useLogin = () => {
       const emailErrMsg = newError.email ?? "";
       const passwordErrMsg = newError.password ?? "";
       const errorMsg = `${emailErrMsg}\n${passwordErrMsg}`;
-      toast({
-        title: "Failed.",
-        description: errorMsg,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage("Failed.", errorMsg, "error");
       return setError(newError);
     } else {
       setError({});
@@ -42,27 +35,13 @@ const useLogin = () => {
       const { data: result } = await authApi.login(loginInput);
       saveAuthUserToStorage(result.user);
       setAuthUser(result.user);
-      toast({
-        title: "Success.",
-        description: "Enjoy snippetter",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage("Success.", "Enjoy snippetter", "success");
       setIsLoading(false);
       navigate("/home/timeline");
     } catch (error) {
       const newError = handleLoginError(error.response);
       setError(newError);
-      toast({
-        title: "Failed.",
-        description: error.response.data.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage("Failed.", error.response.data.message, "error");
       setIsLoading(false);
     }
   };

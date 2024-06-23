@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { FONT } from "../../../const/style/font";
 import { COLOR } from "../../../const/style/color";
-import Avatar from "../../atom/Avatar";
 import useAuthUser from "../../../hooks/useAuthUser";
+import { Link } from "react-router-dom";
+import { Avatar } from "@chakra-ui/react";
 
 const HeaderLayout = ({ children }) => {
   const { authUser } = useAuthUser();
@@ -18,12 +19,14 @@ const HeaderLayout = ({ children }) => {
         }}
       >
         <HeaderAppLogo>Snippetter</HeaderAppLogo>
-        <SAvatar
-          src={
-            process.env.REACT_APP_BACKEND_ORIGIN +
-            (authUser?.profileImage || "noAvatar.png")
-          }
-        ></SAvatar>
+        <Link to={authUser && `/home/profile/${authUser._id}`}>
+          <SAvatar
+            src={
+              process.env.REACT_APP_BACKEND_ORIGIN +
+              (authUser?.profileImage || "noAvatar.png")
+            }
+          ></SAvatar>
+        </Link>
       </div>
       {children}
     </Header>
@@ -34,10 +37,8 @@ export default HeaderLayout;
 
 const Header = styled.div`
   padding: 30px 0;
-  position: fixed;
   width: 100%;
   background-color: rgb(255, 255, 255);
-  z-index: 10;
 `;
 
 const HeaderAppLogo = styled.h1`
@@ -50,4 +51,6 @@ const HeaderAppLogo = styled.h1`
 const SAvatar = styled(Avatar)`
   position: absolute;
   right: 40px;
+  height: 40px;
+  width: 40px;
 `;

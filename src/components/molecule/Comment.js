@@ -1,12 +1,13 @@
-import { Avatar, CircularProgress, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Flex, Text } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { format } from "timeago.js";
-
-import useUser from "../../hooks/useUser";
 import { Link } from "react-router-dom";
 
-const CommentContent = ({ comment }) => {
+import useUser from "../../hooks/useUser";
+import LoadingCircle from "../atom/LoadingCircle";
+
+const Comment = ({ comment }) => {
   const { getUser, user, isLoading } = useUser();
   useEffect(() => {
     getUser(comment.userId);
@@ -17,12 +18,13 @@ const CommentContent = ({ comment }) => {
       <Flex alignItems="center" justifyContent="space-between" flexWrap="wrap">
         <Flex alignItems="center" gap="10px" wordBreak="break-word">
           {isLoading || !user ? (
-            <CircularProgress isIndeterminate color="green.300" />
+            <LoadingCircle />
           ) : (
             <Link to={`/home/profile/${user._id}`}>
               <Avatar
                 src={process.env.REACT_APP_BACKEND_ORIGIN + user.profileImage}
               ></Avatar>
+              <Text>{user.username}</Text>
             </Link>
           )}
 
@@ -34,7 +36,7 @@ const CommentContent = ({ comment }) => {
   );
 };
 
-export default CommentContent;
+export default Comment;
 
 const CommentContentContainer = styled.div`
   margin-bottom: 3%;

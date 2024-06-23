@@ -1,28 +1,18 @@
 import { useState } from "react";
-import postApi from "../api/postApi";
-import { useToast } from "@chakra-ui/react";
-import useAuthUser from "./useAuthUser";
 
-const usePost = (initPost) => {
+import postApi from "../api/postApi";
+import useAuthUser from "./useAuthUser";
+import useAllPosts from "./useAllPosts";
+import useMessage from "./useMessage";
+import { useNavigate } from "react-router-dom";
+
+const usePost = () => {
+  const { allPosts, setAllPosts } = useAllPosts();
   const { authUser } = useAuthUser();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getAllPosts = async () => {
-    try {
-      setIsLoading(true);
-      const { data: result } = await postApi.getAll();
-      setPosts(
-        result.posts.sort((post1, post2) => {
-          return new Date(post2.createdAt) - new Date(post1.createdAt);
-        })
-      );
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
+  const { showMessage } = useMessage();
 
   const getPostsByUserId = async (userId) => {
     try {
@@ -33,9 +23,9 @@ const usePost = (initPost) => {
           return new Date(post2.createdAt) - new Date(post1.createdAt);
         })
       );
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -45,7 +35,6 @@ const usePost = (initPost) => {
   const [editorValue, setEditorValue] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState({});
-  const toast = useToast();
 
   const createPost = async () => {
     const newError = validatePostInput(
@@ -60,14 +49,7 @@ const usePost = (initPost) => {
       const editorValueErrMsg = newError.editorValue ?? "";
       const descriptionErrMsg = newError.description ?? "";
       const errorMsg = `${titleErrMsg}\n${languageErrMsg}\n${editorValueErrMsg}\n${descriptionErrMsg}`;
-      toast({
-        title: "Failed.",
-        description: errorMsg,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage("Failed.", errorMsg, "error");
       return setError(newError);
     } else {
       setError({});
@@ -82,21 +64,21 @@ const usePost = (initPost) => {
         description,
         authorId: authUser._id,
       };
-      await postApi.create(post);
-      toast({
-        description: "Your Snippet is posted.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      const { data: result } = await postApi.create(post);
+      showMessage("Success.", "Your Snippet is posted.", "success");
       setTitle("");
       setLanguage("");
       setEditorValue("");
       setDescription("");
-      setIsLoading(false);
+      const newPosts = [...allPosts, result.post];
+      setAllPosts(
+        newPosts.sort((post1, post2) => {
+          return new Date(post2.createdAt) - new Date(post1.createdAt);
+        })
+      );
     } catch (error) {
       console.log(error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -118,79 +100,83 @@ const usePost = (initPost) => {
     return newError;
   };
 
-  const likePost = async (postId, userId) => {
+  const likePost = async (postId) => {
     try {
       setIsLoading(true);
-      const { data: result } = await postApi.like(postId, userId);
-      const newPosts = posts.map((post) => {
+      const { data: result } = await postApi.like(postId, authUser._id);
+      const newPosts = allPosts.map((post) => {
         if (result.post._id === post._id) {
           return result.post;
         } else {
           return post;
         }
       });
-      setPosts(
-        newPosts.sort((post1, post2) => {
-          return new Date(post2.createdAt) - new Date(post1.createdAt);
-        })
-      );
-
-      setIsLoading(false);
+      const sortedNewPosts = newPosts.sort((post1, post2) => {
+        return new Date(post2.createdAt) - new Date(post1.createdAt);
+      });
+      setAllPosts(sortedNewPosts);
     } catch (error) {
       console.log(error);
+    } finally {
       setIsLoading(false);
     }
   };
 
   const [content, setContent] = useState("");
-  const [comments, setComments] = useState(initPost?.comments);
 
-  const commentPost = async (post) => {
-    await getAllPosts();
+  const commentPost = async (postId) => {
     const createdAt = Date.now();
     const comment = { userId: authUser._id, content, createdAt };
     try {
       setIsLoading(true);
-      const { data: result } = await postApi.comment(post._id, comment);
-      setComments(result.post.comments);
-      setIsLoading(false);
+      const { data: result } = await postApi.comment(postId, comment);
+      const newPosts = allPosts.map((post) => {
+        if (result.post._id === post._id) {
+          return result.post;
+        } else {
+          return post;
+        }
+      });
+      const sortedNewPosts = newPosts.sort((post1, post2) => {
+        return new Date(post2.createdAt) - new Date(post1.createdAt);
+      });
+      setAllPosts(sortedNewPosts);
+      setContent("");
     } catch (error) {
       console.log(error);
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const deletePost = async (postId) => {
-    await getAllPosts();
+  const navigate = useNavigate();
+
+  const deletePost = async (postId, isProfile) => {
     try {
       setIsLoading(true);
       const { data: result } = await postApi.delete(postId);
-      console.log(result.post);
-      const newPosts = posts.filter((post) => {
+      const newPosts = allPosts.filter((post) => {
         return result.post._id !== post._id;
       });
-      setPosts(
-        newPosts.sort((post1, post2) => {
-          return new Date(post2.createdAt) - new Date(post1.createdAt);
-        })
-      );
-      toast({
-        title: "Success.",
-        description: "Your post are deleted",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
+      const sortedNewPosts = newPosts.sort((post1, post2) => {
+        return new Date(post2.createdAt) - new Date(post1.createdAt);
       });
-      setIsLoading(false);
+      setAllPosts(sortedNewPosts);
+      showMessage("Success.", "Your post are deleted", "success");
+      console.log(isProfile);
+      if (isProfile) {
+        navigate(`/home/profile/${authUser._id}`);
+      } else {
+        navigate("/home/timeline");
+      }
     } catch (error) {
       console.log(error);
+    } finally {
       setIsLoading(false);
     }
   };
   return {
     setPosts,
-    getAllPosts,
     getPostsByUserId,
     createPost,
     likePost,
@@ -200,7 +186,6 @@ const usePost = (initPost) => {
     setEditorValue,
     setDescription,
     setContent,
-    setComments,
     deletePost,
     posts,
     isLoading,
@@ -210,7 +195,6 @@ const usePost = (initPost) => {
     editorValue,
     description,
     content,
-    comments,
   };
 };
 

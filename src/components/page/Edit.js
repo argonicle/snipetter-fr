@@ -1,8 +1,6 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-
-import ProfileCard from "../organism/box/ProfileCard";
-import BoxLayout from "../organism/layout/BoxLayout";
 import {
   Button,
   Flex,
@@ -11,10 +9,14 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import { Link, useLocation } from "react-router-dom";
-import useUser from "../../hooks/useUser";
 
-const Setup = () => {
+import ProfileCard from "../organism/box/ProfileCard";
+import BoxLayout from "../organism/layout/BoxLayout";
+import useUser from "../../hooks/useUser";
+import useAuthUser from "../../hooks/useAuthUser";
+
+const Edit = () => {
+  const { authUser } = useAuthUser();
   const {
     editProfile,
     setUsername,
@@ -33,13 +35,13 @@ const Setup = () => {
     <>
       <SetupContainer>
         <SetupWrapper>
-          {!edit ? (
+          {edit ? (
             <Text fontSize="1.5rem" textAlign="center" mb="5%" color="white">
-              Let's start with creating your profile !
+              Edit your profile
             </Text>
           ) : (
             <Text fontSize="1.5rem" textAlign="center" mb="5%" color="white">
-              Edit your profile
+              Let's start with creating your profile !
             </Text>
           )}
           <ProfileCard isEdit />
@@ -87,8 +89,10 @@ const Setup = () => {
           </ProfileEditBox>
           <Flex alignItems="center" justifyContent="center" mt="5%" gap="10%">
             <Button onClick={editProfile}>Edit</Button>
-            <Link to="/home/timeline">
-              {!edit ? <Button>Start</Button> : <Button>Back</Button>}
+            <Link
+              to={edit ? `/home/profile/${authUser._id}` : "/home/timeline"}
+            >
+              {edit ? <Button>Back</Button> : <Button>Start</Button>}
             </Link>
           </Flex>
         </SetupWrapper>
@@ -97,7 +101,7 @@ const Setup = () => {
   );
 };
 
-export default Setup;
+export default Edit;
 
 const SetupContainer = styled.div``;
 

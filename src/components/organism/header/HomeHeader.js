@@ -9,7 +9,6 @@ const HomeHeader = () => {
       <HeaderLayout>
         <HomeNav />
       </HeaderLayout>
-      <div id="top" style={{ backgroundColor: "white", height: "133px" }}></div>
     </>
   );
 };

@@ -5,12 +5,10 @@ import { Link, useLocation } from "react-router-dom";
 import { COLOR } from "../../const/style/color";
 import useLogout from "../../hooks/useLogout";
 import useAuthUser from "../../hooks/useAuthUser";
-import { getAuthUserFromStorage } from "../../util/authUser";
 
 const HomeNav = () => {
   const { handleLogout } = useLogout();
-  // const { authUser } = useAuthUser();
-  const authUser = getAuthUserFromStorage();
+  const { authUser } = useAuthUser();
   const { pathname } = useLocation();
   const [isTimeline, setIsTimeline] = useState(false);
   const [isPost, setIsPost] = useState(false);

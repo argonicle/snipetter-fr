@@ -5,11 +5,11 @@ import Top from "../components/page/Top";
 import LoginBox from "../components/organism/box/LoginBox";
 import SignupBox from "../components/organism/box/SignupBox";
 import Timeline from "../components/page/Timeline";
-import Setup from "../components/page/Setup";
+import Edit from "../components/page/Edit";
 import Home from "../components/page/Home";
 import Post from "../components/page/Post";
 import Profile from "../components/page/Profile";
-import Comment from "../components/page/Comment";
+import PostDetail from "../components/page/PostDetail";
 
 const Router = () => {
   return (
@@ -20,12 +20,16 @@ const Router = () => {
           <Route path="signup" element={<SignupBox />} />
         </Route>
         <Route path="/home" element={<Home />}>
-          <Route index element={<Setup />} />
-          <Route path="timeline" element={<Timeline />}>
-            <Route path=":postId" element={<Comment />} />
+          <Route index element={<Edit />} />
+          <Route path="timeline">
+            <Route index element={<Timeline />} />
+            <Route path=":postId" element={<PostDetail />} />
           </Route>
           <Route path="post" element={<Post />} />
-          <Route path="profile/:userId" element={<Profile />} />
+          <Route path="profile/:userId">
+            <Route index element={<Profile />} />
+            <Route path=":postId" element={<PostDetail />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

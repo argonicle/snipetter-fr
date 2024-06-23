@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, CircularProgress, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Button, Flex, Text } from "@chakra-ui/react";
 import { ImFilePicture } from "react-icons/im";
 import { StarIcon, EditIcon } from "@chakra-ui/icons";
 import styled from "styled-components";
@@ -7,6 +7,7 @@ import styled from "styled-components";
 import useUser from "../../../hooks/useUser";
 import useAuthUser from "../../../hooks/useAuthUser";
 import { Link, useParams } from "react-router-dom";
+import LoadingCircle from "../../atom/LoadingCircle";
 
 const ProfileCard = ({ isEdit }) => {
   const { authUser } = useAuthUser();
@@ -15,15 +16,19 @@ const ProfileCard = ({ isEdit }) => {
   const { getUser, user, editProfile, follow } = useUser();
 
   useEffect(() => {
-    const fetch = async () => {
-      await getUser(userId ?? authUser._id);
-      if (user) {
-        const isFollowing = user.followers.includes(authUser._id);
-        setIsFollowing(isFollowing);
-      }
-    };
-    fetch();
-  }, [authUser, user]);
+    fetchUser();
+  }, [authUser]);
+
+  useEffect(() => {
+    if (user) {
+      const isFollowing = user.followers.includes(authUser._id);
+      setIsFollowing(isFollowing);
+    }
+  }, [user]);
+
+  const fetchUser = async () => {
+    await getUser(userId ?? authUser._id);
+  };
 
   return (
     <ProfileCardContainer>
@@ -32,28 +37,26 @@ const ProfileCard = ({ isEdit }) => {
           <SEditIcon />
         </Link>
       )}
-      <Flex alignItems="center" m="0 auto">
+      <Flex alignItems="center" m="0 auto" pl={isEdit && "3"}>
         {!user ? (
-          <CircularProgress isIndeterminate color="green.300" />
+          <LoadingCircle />
         ) : isEdit ? (
-          <>
-            <SLabel htmlFor="file">
-              <EditAvatar
-                h="100px"
-                w="100px"
-                src={process.env.REACT_APP_BACKEND_ORIGIN + user.profileImage}
-              >
-                <SImFilePicture />
-                <input
-                  id="file"
-                  type="file"
-                  accept=".png, .jpeg, .jpg"
-                  style={{ display: "none" }}
-                  onChange={(e) => editProfile(e)}
-                />
-              </EditAvatar>
-            </SLabel>
-          </>
+          <SLabel htmlFor="file">
+            <EditAvatar
+              h="100px"
+              w="100px"
+              src={process.env.REACT_APP_BACKEND_ORIGIN + user.profileImage}
+            >
+              <SImFilePicture />
+              <input
+                id="file"
+                type="file"
+                accept=".png, .jpeg, .jpg"
+                style={{ display: "none" }}
+                onChange={(e) => editProfile(e)}
+              />
+            </EditAvatar>
+          </SLabel>
         ) : (
           <Flex flexDirection="column" mr="10%" alignItems="center">
             <Avatar

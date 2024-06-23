@@ -4,19 +4,19 @@ import { Navigate, Outlet } from "react-router-dom";
 
 import { FONT } from "../../const/style/font";
 import TopHeader from "../organism/header/TopHeader";
-import { getAuthUserFromStorage } from "../../util/authUser";
+import useAuthUser from "../../hooks/useAuthUser";
 
 const TopImage = process.env.REACT_APP_FRONTEND_ORIGIN + "app-image.jpg";
 
 const Top = () => {
-  const authUser = getAuthUserFromStorage();
+  const { authUser } = useAuthUser();
+
   if (authUser) {
     return <Navigate to="/home/timeline" />;
   } else {
     return (
-      <Container>
+      <TopContainer>
         <TopHeader />
-
         <Main>
           <AppImg>
             <AppImgFilter>
@@ -28,16 +28,20 @@ const Top = () => {
             <Outlet />
           </Login>
         </Main>
-      </Container>
+      </TopContainer>
     );
   }
 };
 
 export default Top;
 
-const Container = styled.div``;
+const TopContainer = styled.div``;
 
-const Main = styled.div``;
+const Main = styled.div`
+  height: 100vh;
+  padding-bottom: 10%;
+  overflow-y: scroll;
+`;
 
 const AppImg = styled.div`
   background-image: url(${TopImage});

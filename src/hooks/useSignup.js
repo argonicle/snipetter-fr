@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
 
 import authApi from "../api/authApi";
 import { saveAuthUserToStorage } from "../util/authUser";
 import useAuthUser from "./useAuthUser";
+import useMessage from "./useMessage";
 
 const useSignup = () => {
   const { setAuthUser } = useAuthUser();
@@ -15,24 +15,18 @@ const useSignup = () => {
   const [error, setError] = useState({});
 
   const navigate = useNavigate();
-  const toast = useToast();
+  const { showMessage } = useMessage();
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
     const newError = validateSignupInput(email, password, confirmPassword);
     if (Object.keys(newError).length > 0) {
       const emailErrMsg = newError.email ?? "";
       const passwordErrMsg = newError.password ?? "";
       const confirmErrMsg = newError.confirmPassword ?? "";
       const errorMsg = `${emailErrMsg}\n${passwordErrMsg}\n${confirmErrMsg}`;
-      toast({
-        title: "Failed.",
-        description: errorMsg,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage("Failed.", errorMsg, "error");
       return setError(newError);
     } else {
       setError({});
@@ -44,29 +38,18 @@ const useSignup = () => {
       const { data: result } = await authApi.signup(signupInput);
       saveAuthUserToStorage(result.user);
       setAuthUser(result.user);
-
-      toast({
-        title: "Account created.",
-        description: "We've created your account for you.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage(
+        "Account created.",
+        "We've created your account for you.",
+        "success"
+      );
       setIsLoading(false);
       navigate("/home");
     } catch (error) {
       const newError = handleSignupError(error.response);
       console.log(error);
       setError(newError);
-      toast({
-        title: "Failed.",
-        description: error.response.data.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      showMessage("Failed.", error.response.data.message, "error");
       setIsLoading(false);
     }
   };
