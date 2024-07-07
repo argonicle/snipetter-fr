@@ -39,8 +39,8 @@ const TopContainer = styled.div``;
 
 const Main = styled.div`
   height: 100vh;
-  padding-bottom: 10%;
-  overflow-y: scroll;
+  padding-top: 134px;
+  background-color: rgb(228, 228, 228);
 `;
 
 const AppImg = styled.div`

@@ -57,6 +57,7 @@ export default AuthBoxLayout;
 const Box = styled.div`
   min-height: 70%;
   width: 70%;
+  max-width: 300px;
   background-color: white;
   box-shadow: 13px 5px 27px -3px #777777;
   border-radius: 10px;

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Input, Button, Select, Textarea } from "@chakra-ui/react";
 import Editor, { loader } from "@monaco-editor/react";
 
-import { COLOR } from "../../const/style/color";
 import usePost from "../../hooks/usePost";
 
 const Post = () => {
@@ -115,7 +114,6 @@ const PostContainer = styled.div`
   text-align: center;
   padding-top: 5%;
   height: 100vh;
-  overflow-y: scroll;
 `;
 
 const PostCard = styled.div`

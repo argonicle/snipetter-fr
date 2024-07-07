@@ -15,7 +15,9 @@ const Home = () => {
   return (
     <HomeContainer>
       <HomeHeader />
-      <Outlet />
+      <div style={{ paddingTop: "134px" }}>
+        <Outlet />
+      </div>
     </HomeContainer>
   );
 };

@@ -52,7 +52,4 @@ const CircularProgressWrapper = styled.div`
   text-align: center;
 `;
 
-const PostCards = styled.div`
-  overflow-y: scroll;
-  height: 100vh;
-`;
+const PostCards = styled.div``;

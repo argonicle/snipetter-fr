@@ -20,6 +20,4 @@ export default Timeline;
 
 const TimelineContainer = styled.div`
   padding: 3% 0;
-  height: 100vh;
-  overflow-y: scroll;
 `;

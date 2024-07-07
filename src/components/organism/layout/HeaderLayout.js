@@ -39,6 +39,8 @@ const Header = styled.div`
   padding: 30px 0;
   width: 100%;
   background-color: rgb(255, 255, 255);
+  position: fixed;
+  z-index: 10;
 `;
 
 const HeaderAppLogo = styled.h1`
