@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/m-snippetter-ver2/static/css/main.8945b604.css",
-    "main.js": "/m-snippetter-ver2/static/js/main.d308b809.js",
+    "main.js": "/m-snippetter-ver2/static/js/main.c48b7693.js",
     "index.html": "/m-snippetter-ver2/index.html",
     "main.8945b604.css.map": "/m-snippetter-ver2/static/css/main.8945b604.css.map",
-    "main.d308b809.js.map": "/m-snippetter-ver2/static/js/main.d308b809.js.map"
+    "main.c48b7693.js.map": "/m-snippetter-ver2/static/js/main.c48b7693.js.map"
   },
   "entrypoints": [
     "static/css/main.8945b604.css",
-    "static/js/main.d308b809.js"
+    "static/js/main.c48b7693.js"
   ]
 }
